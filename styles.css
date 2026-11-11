@@ -242,6 +242,21 @@ p:last-child { margin-bottom: 0; }
   position: relative;
 }
 .callout-warn { background: #fff4c2; }
+.callout-tip { background: #eaf8d6; margin-top: 1rem; }
+.callout-tip::before {
+  content: "★";
+  position: absolute;
+  left: .85rem;
+  top: .9rem;
+  width: 1.7rem;
+  height: 1.7rem;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  background: var(--lime);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+}
 .callout-warn::before {
   content: "!";
   position: absolute;

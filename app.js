@@ -100,7 +100,7 @@
         text.textContent = "Submissions closed on November 25, 2026, 11:59 PM PHT.";
         $("closed-title").textContent = "Submissions are closed";
         $("closed-body").textContent = "The submission period ended on November 25, 2026, at 11:59 PM PHT, and late entries can’t be accepted. " +
-          "Winners are announced on November 27, 2026, during the event. People’s Choice reactions are counted on HighCall VA’s official TikTok and Facebook posts until November 30, 2026, 11:59 PM PHT.";
+          "The 1st, 2nd, and 3rd place winners are announced on November 27, 2026, during the event. Entries are then posted on HighCall VA’s official TikTok and Facebook accounts, People’s Choice voting closes on November 30, 2026, at 11:59 PM PHT, and the People’s Choice winners are announced on December 1, 2026.";
       }
       // Never yank the form away from someone mid-upload — the server decides.
       if (!state.busy && !state.done) {
