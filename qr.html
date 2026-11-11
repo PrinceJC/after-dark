@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QR code — HighCall After Dark</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#0f2a44; --night:#14385e; --lime:#9fd136; --teal:#2aa9b4; --cyan:#74e0ea; --yellow:#ffd84a; --paper:#f6fbef; --muted:#3f5a73;
+      --display:"Bangers","Impact","Arial Black",sans-serif; --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif; color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:var(--body); color:var(--ink); background:var(--paper);
+      background-image: radial-gradient(rgba(159,209,54,.28) 1.6px, transparent 1.8px); background-size:22px 22px; }
+    .tools { max-width:760px; margin:0 auto; padding:20px 16px 0; }
+    .tools h1 { font-family:var(--display); font-weight:400; letter-spacing:.03em; font-size:2.2rem; margin:0 0 6px; color:var(--night); }
+    .tools p { margin:0 0 10px; max-width:68ch; }
+    label { display:block; font-weight:700; margin:14px 0 4px; }
+    .url-row { display:flex; gap:8px; flex-wrap:wrap; }
+    input[type=url] { flex:1 1 320px; font:inherit; border:2px solid var(--ink); border-radius:8px; padding:10px 12px; min-height:46px; }
+    button { font:inherit; font-weight:700; border:2px solid var(--ink); border-radius:10px; padding:10px 16px; background:#fff; color:var(--ink); cursor:pointer; box-shadow:3px 3px 0 var(--ink); min-height:46px; }
+    button.primary { background:var(--lime); }
+    button:hover { background:var(--yellow); }
+    :focus-visible { outline:3px solid var(--teal); outline-offset:3px; }
+    .actions { display:flex; gap:10px; flex-wrap:wrap; margin:16px 0 8px; }
+    .warn { background:#fff4c2; border:2px solid var(--ink); border-radius:10px; padding:10px 12px; }
+    .small { font-size:.9rem; color:var(--muted); }
+
+    /* Poster (what gets printed) */
+    .poster { width:min(720px, calc(100% - 32px)); margin:20px auto 40px; background:#fff; border:4px solid var(--ink); border-radius:16px; box-shadow:8px 8px 0 var(--teal); padding:22px 22px 26px; text-align:center; }
+    .poster img.banner { display:block; width:100%; height:auto; border:3px solid var(--ink); border-radius:10px; }
+    .poster h2 { font-family:var(--display); font-weight:400; letter-spacing:.04em; font-size:clamp(2.2rem, 7vw, 3.4rem); line-height:1; margin:20px 0 4px; color:var(--night); }
+    .poster .tag { font-family:var(--display); letter-spacing:.03em; font-size:clamp(1.2rem,4vw,1.6rem); color:var(--teal); margin:0 0 14px; }
+    .qr-frame { display:inline-block; background:#fff; border:4px solid var(--ink); border-radius:14px; padding:14px; box-shadow:6px 6px 0 var(--lime); }
+    #qr { display:block; width:min(340px, 70vw); height:auto; image-rendering:pixelated; }
+    .deadline { display:inline-block; margin-top:18px; background:var(--yellow); border:3px solid var(--ink); border-radius:10px; padding:8px 16px; font-weight:700; font-size:1.1rem; }
+    .url-print { margin:12px 0 0; font-size:.95rem; color:var(--muted); word-break:break-all; }
+
+    @media print {
+      @page { size: A4 portrait; margin: 12mm; }
+      body { background:#fff; }
+      .tools { display:none; }
+      .poster { width:100%; margin:0; box-shadow:none; border-width:3px; }
+      #qr { width:80mm; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <section class="tools" aria-labelledby="qr-title">
+    <h1 id="qr-title">Contest QR code</h1>
+    <p>Participants scan this code to open the submission page. Print the poster, or download the QR code to use in posts, slides, and chats.</p>
+    <div class="warn" id="warn" hidden></div>
+    <label for="url">Link inside the QR code</label>
+    <div class="url-row">
+      <input id="url" type="url" inputmode="url" spellcheck="false" autocomplete="off">
+      <button type="button" id="apply">Update QR</button>
+    </div>
+    <p class="small">This is filled in automatically with the contest page’s address. The code opens straight to the submission form.</p>
+    <div class="actions">
+      <button type="button" class="primary" id="dl-qr">Download QR code (PNG)</button>
+      <button type="button" id="dl-poster">Download poster (PNG)</button>
+      <button type="button" id="print">Print poster</button>
+    </div>
+    <p class="small">Tip: scan the code with your phone before sharing it, to make sure it opens the contest page.</p>
+  </section>
+
+  <article class="poster" id="poster">
+    <img class="banner" id="banner" src="assets/banner-1400.jpg" width="1400" height="1120" alt="HighCall Multiverse: HighCall After Dark — TikTok Video Contest">
+    <h2>Scan to submit your entry</h2>
+    <p class="tag">Who are you when your shift ends?</p>
+    <div class="qr-frame"><canvas id="qr" width="1024" height="1024" role="img" aria-label="QR code that opens the contest submission page"></canvas></div>
+    <div><span class="deadline">Deadline: November 25, 2026, 11:59 PM PHT</span></div>
+    <p class="url-print" id="url-print"></p>
+  </article>
+
+  <script src="assets/qrcode.js"></script>
+  <script>
+  (function () {
+    "use strict";
+    var input = document.getElementById("url");
+    var warn = document.getElementById("warn");
+    var canvas = document.getElementById("qr");
+    var current = "";
+
+    // The contest page lives next to this file, so its address is known automatically.
+    function detectUrl() {
+      if (location.protocol === "https:" || location.protocol === "http:") {
+        return new URL("./", location.href).href + "#enter";
+      }
+      return "";
+    }
+
+    function drawQr(target, text, size) {
+      var qr = qrcode(0, "H");            // auto version, highest error correction (survives smudges and prints)
+      qr.addData(text);
+      qr.make();
+      var n = qr.getModuleCount();
+      var quiet = 4;                      // standard quiet zone
+      var scale = Math.floor(size / (n + quiet * 2));
+      var px = scale * (n + quiet * 2);
+      target.width = px; target.height = px;
+      var ctx = target.getContext("2d");
+      ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, px, px);
+      ctx.fillStyle = "#0f2a44";          // dark navy: on-brand and still high contrast for scanners
+      for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) {
+        if (qr.isDark(r, c)) ctx.fillRect((c + quiet) * scale, (r + quiet) * scale, scale, scale);
+      }
+      return target;
+    }
+
+    function render() {
+      var text = input.value.trim();
+      warn.hidden = true;
+      if (!/^https?:\/\/\S+$/i.test(text)) {
+        warn.textContent = "Enter the full contest page address, starting with https://";
+        warn.hidden = false;
+        return;
+      }
+      current = text;
+      drawQr(canvas, text, 1024);
+      document.getElementById("url-print").textContent = text.replace(/#enter$/, "");
+    }
+
+    function download(blobCanvas, name) {
+      blobCanvas.toBlob(function (blob) {
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob); a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+      }, "image/png");
+    }
+
+    function posterCanvas() {
+      var W = 1600, pad = 70;
+      var banner = document.getElementById("banner");
+      var bh = Math.round((W - pad * 2) * banner.naturalHeight / banner.naturalWidth);
+      var qrSize = 760;
+      var H = pad + bh + 60 + 120 + 70 + qrSize + 60 + 110 + 80 + pad;
+      var cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+      var x = cv.getContext("2d");
+      x.fillStyle = "#ffffff"; x.fillRect(0, 0, W, H);
+      x.lineWidth = 10; x.strokeStyle = "#0f2a44"; x.strokeRect(5, 5, W - 10, H - 10);
+      var y = pad;
+      x.drawImage(banner, pad, y, W - pad * 2, bh);
+      x.lineWidth = 6; x.strokeRect(pad, y, W - pad * 2, bh);
+      y += bh + 60;
+      x.textAlign = "center"; x.textBaseline = "top";
+      x.fillStyle = "#14385e"; x.font = "120px Bangers, Impact, 'Arial Black', sans-serif";
+      x.fillText("SCAN TO SUBMIT YOUR ENTRY", W / 2, y, W - pad * 2);
+      y += 130;
+      x.fillStyle = "#2aa9b4"; x.font = "60px Bangers, Impact, 'Arial Black', sans-serif";
+      x.fillText("WHO ARE YOU WHEN YOUR SHIFT ENDS?", W / 2, y, W - pad * 2);
+      y += 100;
+      var qx = (W - qrSize) / 2;
+      x.fillStyle = "#9fd136"; x.fillRect(qx + 18, y + 18, qrSize, qrSize);   // offset comic shadow
+      x.drawImage(drawQr(document.createElement("canvas"), current, qrSize), qx, y, qrSize, qrSize);
+      x.lineWidth = 8; x.strokeRect(qx, y, qrSize, qrSize);
+      y += qrSize + 70;
+      var label = "Deadline: November 25, 2026, 11:59 PM PHT";
+      x.font = "bold 50px 'Atkinson Hyperlegible', 'Segoe UI', Arial, sans-serif";
+      var tw = x.measureText(label).width + 70;
+      x.fillStyle = "#ffd84a"; x.fillRect((W - tw) / 2, y, tw, 90);
+      x.lineWidth = 6; x.strokeRect((W - tw) / 2, y, tw, 90);
+      x.fillStyle = "#0f2a44"; x.textBaseline = "middle"; x.fillText(label, W / 2, y + 47);
+      y += 130;
+      x.font = "36px 'Atkinson Hyperlegible', 'Segoe UI', Arial, sans-serif"; x.fillStyle = "#3f5a73";
+      x.fillText(current.replace(/#enter$/, ""), W / 2, y, W - pad * 2);
+      return cv;
+    }
+
+    document.getElementById("apply").addEventListener("click", render);
+    input.addEventListener("keydown", function (e) { if (e.key === "Enter") render(); });
+    document.getElementById("dl-qr").addEventListener("click", function () {
+      if (!current) return render();
+      download(drawQr(document.createElement("canvas"), current, 2048), "highcall-after-dark-qr.png");
+    });
+    document.getElementById("dl-poster").addEventListener("click", function () {
+      if (!current) return render();
+      var b = document.getElementById("banner");
+      var go = function () {
+        try { download(posterCanvas(), "highcall-after-dark-qr-poster.png"); }
+        catch (e) { warn.textContent = "The poster couldn’t be created here. Open this page from the live site and try again, or use Print poster."; warn.hidden = false; }
+      };
+      var ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+      ready.then(function () { if (b.complete) go(); else b.addEventListener("load", go, { once: true }); });
+    });
+    document.getElementById("print").addEventListener("click", function () { window.print(); });
+
+    input.value = detectUrl();
+    if (input.value) render();
+    else {
+      warn.textContent = "Open this page from the live site (https://YOUR-USERNAME.github.io/after-dark/qr.html) so the address fills in automatically, or type the contest page address above.";
+      warn.hidden = false;
+    }
+  })();
+  </script>
+</body>
+</html>
