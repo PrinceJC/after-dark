@@ -5,7 +5,7 @@
 window.CONTEST_CONFIG = {
   // Paste the Web app URL of the "After Dark — Submission API" Apps Script deployment
   // (it ends in /exec). See README.md, step 3.
-  API_URL: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE",
+  API_URL: "https://script.google.com/macros/s/AKfycbzE_VyrsmJN6mx8xiWPtiHBAMTNSgS3aCcTl2_vMrC2lEr3KfmcWUh3puM7MgyL-_PE4Q/exec",
 
   // Shown beside the upload field. The server enforces its own copy of these
   // limits in apps-script/backend/Config.gs — keep both in sync.
