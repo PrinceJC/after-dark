@@ -21,7 +21,7 @@ window.CONTEST_CONFIG = {
   // Optional inspiration links. Leave the lists empty to hide the section.
   // Each item: { label: "What people will see", url: "https://..." }
   SAMPLE_VIDEOS: [
-    // { label: "Sample transition video", url: "https://..." },
+    { label: "Watch the sample videos (Google Drive folder)", url: "https://drive.google.com/drive/folders/1RCh7wl3kzknibihdEJh9ecHYeOnHUmit" },
   ],
   MUSIC_IDEAS: [
     // { label: "Song or sound name", url: "https://..." },
