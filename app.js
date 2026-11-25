@@ -45,6 +45,13 @@
     return new Intl.DateTimeFormat("en-US", { timeZone: TZ, hour: "numeric", minute: "2-digit" }).format(d) + " PHT";
   }
   function now() { return new Date(Date.now() + period.serverOffsetMs); }
+  // The last minute before the cutoff, e.g. "November 28, 2026, 11:59 PM PHT"
+  function lastMinute() { return new Date(period.cutoffAt.getTime() - 60000); }
+  function deadlineLong() { return fmtPHT(lastMinute()); }
+  function deadlineShort() {
+    return new Intl.DateTimeFormat("en-US", { timeZone: TZ, month: "long", day: "numeric", hour: "numeric", minute: "2-digit" }).format(lastMinute()) + " PHT";
+  }
+  function cutoffDay() { return new Intl.DateTimeFormat("en-US", { timeZone: TZ, month: "long", day: "numeric" }).format(period.cutoffAt); }
   function uuid() {
     if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
     var a = new Uint8Array(16); crypto.getRandomValues(a);
@@ -85,7 +92,7 @@
     }
 
     if (p === "open") {
-      text.textContent = "Submissions are open until November 25, 11:59 PM PHT. " + timeLeft() + ".";
+      text.textContent = "Submissions are open until " + deadlineShort() + ". " + timeLeft() + ".";
       cta.hidden = state.done;
       $("closed-msg").hidden = true;
       if (!state.done) form.hidden = false;
@@ -95,11 +102,11 @@
         text.textContent = "Submissions open on " + fmtPHT(period.opensAt) + ".";
         $("closed-title").textContent = "Submissions aren’t open yet";
         $("closed-body").textContent = "The submission period starts on " + fmtPHT(period.opensAt) +
-          " and runs until November 25, 2026, 11:59 PM PHT. Come back then to upload your video.";
+          " and runs until " + deadlineLong() + ". Come back then to upload your video.";
       } else {
-        text.textContent = "Submissions closed on November 25, 2026, 11:59 PM PHT.";
+        text.textContent = "Submissions closed on " + deadlineLong() + ".";
         $("closed-title").textContent = "Submissions are closed";
-        $("closed-body").textContent = "The submission period ended on November 25, 2026, at 11:59 PM PHT, and late entries can’t be accepted. " +
+        $("closed-body").textContent = "The submission period ended on " + deadlineLong() + ", and late entries can’t be accepted. " +
           "The 1st, 2nd, and 3rd place winners are announced on November 27, 2026, during the event. Entries are then posted on HighCall VA’s official TikTok and Facebook accounts, People’s Choice voting closes on November 30, 2026, at 11:59 PM PHT, and the People’s Choice winners are announced on December 1, 2026.";
       }
       // Never yank the form away from someone mid-upload — the server decides.
@@ -115,10 +122,10 @@
     var t = $("grace-text");
     if (g > 0) {
       var until = new Date(period.cutoffAt.getTime() + g * 60000);
-      t.textContent = "If you select Submit entry before 12:00 AM PHT on November 26, your entry is registered on time and your video may keep uploading until " +
+      t.textContent = "If you select Submit entry before 12:00 AM PHT on " + cutoffDay() + ", your entry is registered on time and your video may keep uploading until " +
         fmtTimePHT(until) + ". Uploads that haven’t finished by then are not accepted. Start early so a slow connection doesn’t cost you your spot.";
     } else {
-      t.textContent = "Your video must finish uploading before 12:00 AM PHT on November 26. An upload still in progress at midnight is not accepted, so start early.";
+      t.textContent = "Your video must finish uploading before 12:00 AM PHT on " + cutoffDay() + ". An upload still in progress at midnight is not accepted, so start early.";
     }
   }
 
@@ -500,7 +507,7 @@
     UPLOAD: "<strong>The upload didn’t go through.</strong> Your details are still here. Select Try again. If it keeps failing, export the video again and replace the file.",
     SERVER: "<strong>We couldn’t reach the contest server.</strong> Your details are still here. Wait a moment, then select Try again.",
     SESSION_EXPIRED: "<strong>The upload link expired.</strong> Select Try again to start a fresh upload. Your details are still here.",
-    DEADLINE_PASSED: "<strong>Submissions are closed.</strong> The deadline was November 25, 2026, 11:59 PM PHT, so this entry can’t be accepted.",
+    DEADLINE_PASSED: "<strong>Submissions are closed.</strong> The deadline was {deadline}, so this entry can’t be accepted.",
     UPLOAD_WINDOW_CLOSED: "<strong>The upload finished too late.</strong> Your entry was registered before the deadline, but the video didn’t finish uploading within the allowed time after midnight, so it can’t be accepted.",
     NOT_OPEN: "<strong>Submissions aren’t open yet.</strong> They open on November 11, 2026, 12:00 AM PHT.",
     RATE_LIMITED: "<strong>Too many attempts in a short time.</strong> Wait a few minutes, then select Try again.",
@@ -588,7 +595,7 @@
       return;
     }
     if (code === "DEADLINE_PASSED" || code === "UPLOAD_WINDOW_CLOSED") {
-      showAlert(MESSAGES[code], false);
+      showAlert(MESSAGES[code].replace("{deadline}", esc(deadlineLong())), false);
       loadStatus();
       return;
     }

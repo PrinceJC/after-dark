@@ -73,7 +73,7 @@
     <h2>Scan to submit your entry</h2>
     <p class="tag">Who are you when your shift ends?</p>
     <div class="qr-frame"><canvas id="qr" width="1024" height="1024" role="img" aria-label="QR code that opens the contest submission page"></canvas></div>
-    <div><span class="deadline">Deadline: November 25, 2026, 11:59 PM PHT</span></div>
+    <div><span class="deadline">Deadline: November 28, 2026, 11:59 PM PHT</span></div>
     <p class="url-print" id="url-print"></p>
   </article>
 
@@ -160,7 +160,7 @@
       x.drawImage(drawQr(document.createElement("canvas"), current, qrSize), qx, y, qrSize, qrSize);
       x.lineWidth = 8; x.strokeRect(qx, y, qrSize, qrSize);
       y += qrSize + 70;
-      var label = "Deadline: November 25, 2026, 11:59 PM PHT";
+      var label = "Deadline: November 28, 2026, 11:59 PM PHT";
       x.font = "bold 50px 'Atkinson Hyperlegible', 'Segoe UI', Arial, sans-serif";
       var tw = x.measureText(label).width + 70;
       x.fillStyle = "#ffd84a"; x.fillRect((W - tw) / 2, y, tw, 90);

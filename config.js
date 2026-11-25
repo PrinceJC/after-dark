@@ -16,7 +16,7 @@ window.CONTEST_CONFIG = {
   // Fallback dates, used only if the server can't be reached.
   // The server's own dates are always the ones enforced.
   OPENS_AT: "2026-11-11T00:00:00+08:00",
-  CUTOFF_AT: "2026-11-26T00:00:00+08:00", // before 12:00 AM PHT, Nov 26 = 11:59 PM, Nov 25
+  CUTOFF_AT: "2026-11-29T00:00:00+08:00", // before 12:00 AM PHT, Nov 29 = 11:59 PM, Nov 28 (extended)
 
   // Optional inspiration links. Leave the lists empty to hide the section.
   // Each item: { label: "What people will see", url: "https://..." }
